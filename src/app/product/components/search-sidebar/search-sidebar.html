@@ -1,0 +1,114 @@
+<div class="left-sidebar">
+
+  <h2 translate>Category</h2>
+  <div class="panel-group category-products">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" [routerLink]="['/products/search']" [queryParams]="{categoryId: '', shopId: routeId.shopId}"
+            [ngClass]="{'active-a': routeId.categoryId == ''}">
+            <span translate>All Category</span>
+          </a>
+        </h4>
+      </div>
+    </div>
+    <div class="panel panel-default" *ngFor="let category of tree">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" [routerLink]="['/products/search']" [queryParams]="{categoryId: category._id, shopId: routeId.shopId}"
+            [ngClass]="{collapsed: !category.showChildren, 'active-a': category._id === routeId.categoryId}">
+            {{category.name}}
+          </a>
+          <span class="badge pull-right" *ngIf="category?.children?.length" (click)="category.showChildren = !category.showChildren">
+            <i class="fa fa-plus" [hidden]="category.showChildren"></i>
+            <i class="fa fa-minus" [hidden]="!category.showChildren"></i>
+          </span>
+        </h4>
+      </div>
+      <div class="panel-collapse" *ngIf="category?.children?.length" [ngClass]="{collapse: !category.showChildren, in: category.showChildren}">
+        <div class="panel-body">
+          <ul>
+            <li *ngFor="let child of category.children">
+              <a [routerLink]="['/products/search']" [queryParams]="{categoryId: child._id}" [ngClass]="{'active-a': child._id === routeId.categoryId}">
+                {{child.name}}
+              </a>
+              <span class="badge pull-right" *ngIf="child?.children?.length" (click)="child.showChildren = !child.showChildren">
+                <i class="fa fa-plus" [hidden]="child.showChildren"></i>
+                <i class="fa fa-minus" [hidden]="!child.showChildren"></i>
+              </span>
+              <div class="pad-10" *ngFor="let subChild of child.children" [ngClass]="{collapse: !child.showChildren, in: child.showChildren}">
+                <a [routerLink]="['/products/search']" [queryParams]="{categoryId: subChild._id}" [ngClass]="{'active-a': subChild._id === routeId.categoryId}">{{subChild.name}}</a>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>
+    <a [routerLink]="['/shops/search']" [queryParams]="{featured: 1}" translate>
+      Featured Shops
+    </a>
+  </h2>
+  <div class="panel-group category-products">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" [routerLink]="['/products/search']" [queryParams]="{categoryId: routeId.categoryId, shopId: ''}"
+            [ngClass]="{'active-a': routeId.shopId == ''}">
+            <span translate>All Shop</span>
+          </a>
+        </h4>
+      </div>
+    </div>
+    <div class="panel panel-default" *ngFor="let item of shops">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" [routerLink]="['/products/search']" [queryParams]="{categoryId: routeId.categoryId, shopId: item._id}"
+            [ngClass]="{'active-a': item._id === routeId.shopId}">
+            {{item.name}}
+          </a>
+        </h4>
+      </div>
+    </div>
+  </div>
+
+  <h2 translate>Filters</h2>
+  <div class="panel-group category-products">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <h6>
+            <input name="filter" type="checkbox" (change)="filter()" [checked]="filterAll" [(ngModel)]="filterAll">&nbsp;
+            <span translate>All</span>
+          </h6>
+          <h6>
+            <input name="discounted" [disabled]="filterAll" type="checkbox" (change)="filter()" [(ngModel)]="searchFields.discounted">&nbsp;
+            <span translate>Discounted</span>
+          </h6>
+          <h6>
+            <input name="bestSell" [disabled]="filterAll" type="checkbox" (change)="filter()" [(ngModel)]="searchFields.bestSell">&nbsp;
+            <span translate>Best Sale</span>
+          </h6>
+          <h6>
+            <input name="featured" [disabled]="filterAll" type="checkbox" (change)="filter()" [(ngModel)]="searchFields.featured">&nbsp;
+            <span translate>Featured</span>
+          </h6>
+          <h6>
+            <input name="hot" [disabled]="filterAll" type="checkbox" (change)="filter()" [(ngModel)]="searchFields.hot">&nbsp;
+            <span translate>Hottest</span>
+          </h6>
+          <h6>
+            <input name="dailyDeal" [disabled]="filterAll" type="checkbox" (change)="filter()" [(ngModel)]="searchFields.dailyDeal">&nbsp;
+            <span translate>Daily Deal</span>
+          </h6>
+          <h6>
+            <input name="soldOut" [disabled]="filterAll" type="checkbox" (change)="filter()" [(ngModel)]="searchFields.soldOut">&nbsp;
+            <span translate>Sold Out</span>
+          </h6>
+        </h4>
+      </div>
+    </div>
+  </div>
+</div>

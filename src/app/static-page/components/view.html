@@ -1,0 +1,10 @@
+<div class="padding-main">
+  <div class="container">
+    <div class="title-main">
+      <h4>{{page?.title}}</h4>
+    </div>
+    <div class="pad-20">
+      <div [innerHtml]="page.content | safeHtml" *ngIf="page.content" class="no-convert-css"></div>
+    </div>
+  </div>
+</div>

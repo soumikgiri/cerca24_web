@@ -1,0 +1,52 @@
+<div class="modal-header">
+  <h4 class="modal-title" translate>Pick up verification</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.close('Cross click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+    <div class="form-group">
+      <label translate>I will pick up</label>
+      <select class="form-control" [(ngModel)]="pickUpPerInfo.pickUpBy">
+        <option value="self" translate>By Self</option>
+        <option value="others" translate>By Other</option>
+      </select>
+    </div>
+    <form #frm="ngForm" (submit)="submit(frm)">
+    <div class="row" *ngIf="pickUpPerInfo.pickUpBy === 'others'">
+            <div class="col">
+                <div class="form-group">
+                  <label class="required">Name</label>
+                  <input class="form-control" [(ngModel)]="pickUpPerInfo.name" name="name" required #name="ngModel">
+                  <div *ngIf="name.errors && (name.dirty || name.touched)">
+                    <p [hidden]="!name.errors.required" class="error" translate>Name is required</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="required">ID Number</label>
+                  <input class="form-control" [(ngModel)]="pickUpPerInfo.idNumber" name="id" required #id="ngModel">
+                </div>
+                <div *ngIf="id.errors && (id.dirty || id.touched)">
+                  <p [hidden]="!id.errors.required" class="error" translate>ID number is required</p>
+                </div>
+              </div>
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <label translate class="required">Mobile Number</label>
+                  <div class="input-group">
+                    <dial-code (selectCode)="selectDial($event)" [dial]="mobile.dial"></dial-code>
+                    <input type="text" class="form-control" pattern="[0-9]{9,10}" [(ngModel)]="mobile.number" required name="phoneNumber" #phone="ngModel" />
+                  </div>
+                  <div *ngIf="phone.errors && (phone.dirty || phone.touched)">
+                    <p [hidden]="!phone.errors.pattern" class="error" translate>Please enter 9 or 10 digits number</p>
+                    <p [hidden]="!phone.errors.required" class="error" translate>Mobile number is required </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <button class="btn btn-success" type="submit" translate>Confirm</button>&nbsp;
+          <button class="btn btn-warning" type="button" (click)="activeModal.close('Cancel')" translate>Cancel</button>
+    </form>
+</div>

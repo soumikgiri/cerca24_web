@@ -1,0 +1,85 @@
+<footer id="footer">
+
+  <div class="footer-widget">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-2">
+          <div class="single-widget">
+            <h2 translate>Company</h2>
+            <ul>
+              <li><a class="a-link-color" appLocationHref [href]="'/page/about'" translate>About</a></li>
+              <li><a class="a-link-color" appLocationHref [href]="'/contact/us'" translate>Contact Us</a></li>
+              <li><a class="a-link-color" appLocationHref [href]="'/page/terms'" translate>Terms of Use</a></li>
+              <li><a [href]="sellerLink" style="color: #2E64FE" target="_blank" translate>Become a seller</a></li>
+              <img src="/assets/images/credit-card-list.png" width="100%" class="mar-top-20">
+            </ul>
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="single-widget">
+            <h2>Customer Service</h2>
+            <ul>
+              <li><a class="a-link-color" appLocationHref [href]="'/page/refund-policy'" translate>Refund Policy</a></li>
+              <li><a class="a-link-color" appLocationHref [href]="'/page/pickup-policy'" translate>Pick up Policy</a></li>
+              <li><a class="a-link-color" appLocationHref [href]="'/page/delivery-policy'" translate>Delivery Policy</a></li>
+              <li><a class="a-link-color" appLocationHref [href]="'/page/privacy-policy'" translate>Privacy Policy</a></li>
+              <li><a class="a-link-color" appLocationHref [href]="'/page/faqs'" translate>FAQ’s</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="single-widget">
+            <h2 translate>Connect</h2>
+            <ul>
+              <li>
+                <i class="fa fa-phone"></i>+260 987654321
+              </li>
+              <li><i class="fa fa-envelope"></i>shop@gmail.com</li>
+              <li class="mar-top-20">
+                <img src="/assets/images/norton.png" width="70px" class="mar-right-15 mar-top-10">
+                <img src="/assets/images/ssl_icon.png" width="70px">
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="single-widget">
+            <h2 translate>Address</h2>
+            <ul>
+              <li>
+                Mbizi Online Shopping Limited<br>
+                2nd Floor Office Block A<br>
+                Stand 4897 Los Angeles Boulevard<br>
+                P.O Box 30451<br>
+                Longacres, Lusaka.
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-sm-3 col-sm-offset-1">
+          <div class="single-widget">
+            <h2 translate>Newsletter</h2>
+            <newsletter></newsletter>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="social-icons text-center">
+    <ul class="nav navbar-nav">
+      <li *ngIf="socialLinks?.facebook"><a [href]="socialLinks?.facebook"><i class="fa fa-facebook"></i></a></li>
+      <li *ngIf="socialLinks?.twitter"><a [href]="socialLinks?.twitter"><i class="fa fa-twitter"></i></a></li>
+      <li *ngIf="socialLinks?.linkedin"><a [href]="socialLinks?.linkedin"><i class="fa fa-linkedin"></i></a></li>
+      <li *ngIf="socialLinks?.dribbble"><a [href]="socialLinks?.dribbble"><i class="fa fa-dribbble"></i></a></li>
+      <li *ngIf="socialLinks?.google"><a [href]="socialLinks?.google"><i class="fa fa-google-plus"></i></a></li>
+    </ul>
+  </div>
+  <div class="footer-bottom">
+    <div class="container">
+      <div class="row">
+        <p class="pull-left">Version {{appConfig?.version}} build
+          {{appConfig?.build}} - @Copyright © 2018. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>

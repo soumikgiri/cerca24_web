@@ -1,0 +1,339 @@
+<div class="padding-main">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="panel panel-default">
+          <div class="panel-heading resume-heading">
+            <div class="row">
+              <div class="col-lg-12">
+                <h3 translate>General information</h3>
+                <ul class="list-group">
+                  <li class="list-group-item">
+                    <div class="row">
+                      <div class="col-md-2" translate>
+                        Invoice ID
+                      </div>
+                      <div class="col-md-10">
+                        <strong>{{order?.trackingCode}}</strong>
+                      </div>
+                    </div>
+                  </li>
+                  <!-- <li class="list-group-item">
+                    <div class="row">
+                      <div class="col-md-2" translate>
+                        IP
+                      </div>
+                      <div class="col-md-10">
+                        {{order.userIP}}
+                      </div>
+                    </div>
+                  </li> -->
+                  <li class="list-group-item">
+                    <div class="row">
+                      <div class="col-md-2" translate>
+                        Created at
+                      </div>
+                      <div class="col-md-10">
+                        {{order?.createdAt | date:'short'}}
+                      </div>
+                    </div>
+                  </li>
+                  <!-- <li class="list-group-item">
+                    <div class="row">
+                      <div class="col-md-2" translate>
+                        Shipping address
+                      </div>
+                      <div class="col-md-10">
+                        {{order.shippingAddress}}
+                      </div>
+                    </div>
+                  </li> -->
+                  <li class="list-group-item">
+                    <div class="row">
+                      <div class="col-md-2" translate>
+                        Payment method
+                      </div>
+                      <div class="col-md-10">
+                        <span class="badge badge-success" *ngIf="order.paymentMethod === 'cybersource'">Cyber Source
+                          CC</span>
+                        <span class="badge badge-success" *ngIf="order.paymentMethod === 'stripe'">Stripe</span>
+                        <span class="badge badge-success" *ngIf="order.paymentMethod === 'paypal'">Paypal</span>
+                        <span class="badge badge-success" *ngIf="order.paymentMethod === 'cod'">COD</span>
+                      </div>
+                    </div>
+                  </li>
+                  <li class="list-group-item">
+                    <div class="row">
+                      <div class="col-md-2" translate>
+                        Payment status
+                      </div>
+                      <div class="col-md-10">
+                        <span class="badge badge-success">
+                          {{order?.paymentStatus}}
+                        </span>
+                      </div>
+                    </div>
+                  </li>
+                  <li class="list-group-item">
+                    <div class="row">
+                      <div class="col-md-2" translate>
+                        Delivery price
+                      </div>
+                      <div class="col-md-10">
+                        {{order?.deliveryPrice | currency:"ZMW "}}
+                      </div>
+                    </div>
+                  </li>
+                  <li class="list-group-item">
+                    <div class="row">
+                      <div class="col-md-2" translate>
+                        Total price
+                      </div>
+                      <div class="col-md-10 price-product">
+                        {{order?.userTotalPrice | currency:"ZMW "}}
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+                <br>
+                <h3 translate>Picking details</h3>
+                <ul class="list-group">
+                  <li class="list-group-item">
+                    <div class="row">
+                      <div class="col-md-2" translate>
+                        Name
+                      </div>
+                      <div class="col-md-10">
+                        {{order?.firstName}} {{order?.lastName}}
+                      </div>
+                    </div>
+                  </li>
+                  <li class="list-group-item">
+                    <div class="row">
+                      <div class="col-md-2" translate>
+                        Email
+                      </div>
+                      <div class="col-md-4">
+                        {{order?.email || order?.customer?.email}}
+                      </div>
+                      <div class="col-md-2" translate>
+                        Phone number
+                      </div>
+                      <div class="col-md-4">
+                        {{order?.phoneNumber}}
+                      </div>
+                    </div>
+                  </li>
+                  <li class="list-group-item">
+                    <div class="row">
+                      <div class="col-md-2" translate>
+                        Street address
+                      </div>
+                      <div class="col-md-4">
+                        {{order?.streetAddress}}
+                      </div>
+                      <div class="col-md-2" translate>
+                        Area
+                      </div>
+                      <div class="col-md-4">
+                        {{order.state}}
+                      </div>
+                    </div>
+                  </li>
+                  <li class="list-group-item">
+                    <div class="row">
+                      <div class="col-md-2" translate>
+                        City
+                      </div>
+                      <div class="col-md-4">
+                        {{order?.city}}
+                      </div>
+                      <div class="col-md-2" translate>
+                        Country
+                      </div>
+                      <div class="col-md-4">
+                        {{order?.country}}
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+                <br>
+                <div class="panel-body" *ngFor="let shop of listShops">
+                  <h4>Shop <strong>{{shop[0]?.shopDetail?.name}}</strong></h4>
+                  <div class="table-responsive">
+                    <table class="table table-condensed border-1">
+                      <thead>
+                        <tr style="background: #a8d400; color: #fff">
+                          <th translate class="no-wrap">Sub order ID</th>
+                          <th translate class="min-width-200">
+                            Product
+                          </th>
+                          <th translate class="min-width-200">
+                            Variant
+                          </th>
+                          <th translate>
+                            Quantity
+                          </th>
+                          <th translate>
+                            Status
+                          </th>
+                          <!-- <th>
+                                <span translate>Shipping Method</span>
+                              </th>
+                              <th>
+                                <span translate>Shipping Code</span>
+                              </th> -->
+                          <th>
+                            <span translate>Tax</span>
+                            <!-- / <span translate>Shipping price</span> -->
+                          </th>
+                          <th translate>Original Price</th>
+                          <th translate>Discount Price</th>
+                          <th translate>Delivery Price</th>
+                          <th translate>Total Price</th>
+                          <th translate class="min-width-200">Shipping Information</th>
+                          <th translate>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let item of shop, let i = index">
+                          <td>
+                            {{item?.trackingCode}}
+                          </td>
+                          <td>
+                            <a appLocationHref
+                              [url]="'/products/' + item.productDetails.alias">{{item?.productDetails?.name}}</a>
+                            <br />
+                            Type: <span class="badge badge-primary">{{item.productDetails?.type}}</span><br>
+                            <span *ngIf="item.productDetails && item.productDetails.weight">
+                              Weight: {{item.productDetails?.weight}}{{item.productDetails?.weightType}}
+                            </span><br>
+                            <span *ngIf="item.productDetails && item.productDetails.volume">
+                              Volume: {{item.productDetails?.volume}} &#13221;
+                            </span>
+                          </td>
+                          <td>
+                            <p *ngIf="item.variantDetails">
+                              <span *ngFor="let option of item.variantDetails.options" class="no-wrap">
+                                {{option.displayText || option.optionKey}}: {{option.value}}
+                              </span>
+                            </p>
+                          </td>
+                          <td>{{item?.quantity}}</td>
+                          <td>
+                            <status-display [status]="item.status"></status-display>
+                          </td>
+                          <!-- <td>
+                                <span class="text-muted" [hidden]="item.shippingMethod">N/A</span>
+                                <span class="badge badge-success">{{item?.shippingMethod}}</span>
+                              </td>
+                              <td>
+                                <span class="text-muted" [hidden]="item.shippingCode">N/A</span>
+                                <span class="badge badge-warning">{{item?.shippingCode}}</span>
+                              </td> -->
+                          <td>
+                            <p>
+                              <span class="no-wrap">
+                                <span *ngIf="item.taxClass">{{item.taxClass}}-</span>
+                                <!-- <price-currency [price]="item.taxPrice" [currency]="order.userCurrency"></price-currency> -->
+                                {{item?.taxPrice | currency:"ZMW "}}
+                              </span>
+                              <!-- <br />
+                                  <span class="no-wrap">
+                                    <span translate>Shipping </span>
+                                   {{item.shippingPrice | currency:"ZMW "}}
+                                  </span> -->
+                            </p>
+                          </td>
+                          <td class="no-wrap">
+                            {{item?.unitPrice | currency:"ZMW "}}
+                          </td>
+                          <td class="no-wrap">
+                            {{item?.unitPrice - item?.productPrice | currency:"ZMW "}}
+                          </td>
+                          <td>
+                            <span class="no-wrap">{{item?.deliveryPrice | currency:"ZMW "}}</span>
+                          </td>
+                          <td>
+                            <!-- <price-currency [price]="item.userTotalPrice" [currency]="item.userCurrency"></price-currency> -->
+                            <span class="no-wrap">{{item?.userTotalPrice | currency:"ZMW "}}</span>
+                          </td>
+                          <td *ngIf="!item.deliveryCompanyInfo">
+                            <p class="no-wrap">
+                              <strong>Method: </strong><span class="badge badge-info no-wrap">Pick Up At Store</span>
+                            </p>
+                            <p class="no-wrap">
+                              <strong>Shop: </strong> {{item?.shopDetail?.name}}
+                              <br>
+                              {{item?.pickUpAddress}}
+                            </p>
+                            <div>
+                              <strong>By: </strong>
+                              <span class="badge badge-primary">{{item?.userPickUpInfo.pickUpBy}}</span>
+                              <p>{{order?.userPickUpInfo?.pickUpBy}}</p>
+                              <p
+                                *ngIf="order.userPickUpInfo && order.userPickUpInfo.pickUpBy === 'others' && order.userPickUpInfo.name">
+                                Name:
+                                {{item?.userPickUpInfo?.name}}</p>
+                              <p
+                                *ngIf="order.userPickUpInfo && order.userPickUpInfo.pickUpBy === 'others' && order.userPickUpInfo.idNumber">
+                                ID:
+                                {{item?.userPickUpInfo?.idNumber}}</p>
+                              <p
+                                *ngIf="order.userPickUpInfo && order.userPickUpInfo.pickUpBy === 'others' && order.userPickUpInfo.phoneNumber">
+                                Address:
+                                {{item?.userPickUpInfo?.phoneNumber}}</p>
+                            </div>
+                          </td>
+                          <td *ngIf="item.deliveryCompanyInfo">
+                            <p class="no-wrap">
+                              <strong>Method: </strong><span class="badge badge-danger no-wrap">Delivery</span>
+                            </p>
+                            <p class="no-wrap">
+                              <strong>Company: </strong>
+                              {{item?.deliveryCompanyInfo?.name}}
+                              <br>
+                              {{item?.deliveryCompanyInfo?.address}}
+                            </p>
+                            <p>
+                              <strong translate>Status: </strong>
+                              <span class="badge badge-warning text-capitalize">{{item?.deliveryStatus}}</span>
+                            </p>
+                          </td>
+                          <td>
+                            <button class="btn btn-warning export-btn" *ngIf="item.status !== 'refunded'"
+                              (click)="openRefund(item)" translate>
+                              Request Refund
+                            </button>
+                            <br>
+                            <button class="btn btn-warning export-btn" (click)="exportPDF(item)" translate>Get
+                              Bill</button>
+                            <br>
+                            <button *ngIf="item.driverId" class="btn btn-warning export-btn" (click)="openMap(item)"
+                              translate [disabled]="
+                                                    item.deliveryStatus === 'deliveried' || 
+                                                    item.deliveryStatus === 'postponed' || 
+                                                    item.deliveryStatus === 'cancelled'">
+                              Position Driver
+                            </button>
+                            <br>
+                            <button *ngIf="item.deliveryHistory.length > 0" class="btn btn-warning export-btn"
+                              (click)="openHistoryStatus(item)" translate>
+                              Delivery History
+                            </button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <br>
+                <a class="btn btn-warning" appLocationHref [url]="'/orders/list'" translate>Cancel</a>&nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

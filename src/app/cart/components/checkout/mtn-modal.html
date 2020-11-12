@@ -1,0 +1,27 @@
+<div class="modal-header">
+  <h4 class="modal-title">Mobile payment</h4>
+  <button type="button" class="close" aria-label="Close" (click)="close()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <form #frm="ngForm" (submit)="submit(frm)">
+    <div class="form-group" *ngIf="!waiting">
+      <label translate class="required">Mobile number</label>
+      <input type="text" class="form-control" required name="phoneNumber" #phone="ngModel"
+        (keypress)="onlyNumberKey($event)" [(ngModel)]="phoneNumber" autocomplete="off" />
+      <small class="form-text text-muted" translate>Please enter your phone number.</small>
+      <div *ngIf="phone.errors && (phone.dirty || phone.touched || submitted)">
+        <p [hidden]="!phone.errors.required" class="error" translate>Mobile number is required</p>
+      </div>
+    </div>
+    <div class="form-group" *ngIf="waiting">
+      <p>Transaction confirmation has been sent to your mobile, please check and approve!</p>
+    </div>
+    <div class="form-group" *ngIf="!waiting">
+      <label>&nbsp;&nbsp;</label>
+      <button type="button" class="btn btn-outline-dark" (click)="close()">Close</button>
+      <button type="submit" class="btn btn-outline-dark">Submit</button>
+    </div>
+  </form>
+</div>

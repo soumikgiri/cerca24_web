@@ -1,0 +1,400 @@
+<div class="container">
+  <div class="steps-cart">
+    <span translate class="mar-right-10">Check Out</span> <i class="fa fa-arrow-right mar-right-10"></i> <span translate
+      class="mar-right-10">Payment</span> <i class="fa fa-arrow-right mar-right-10"></i> <span translate>Success</span>
+  </div>
+  <form #frm="ngForm" (submit)="submit(frm)">
+    <article class="card-body" id="cart_items">
+      <div class="row">
+        <div class="table-responsive cart_info">
+          <table class="table table-condensed">
+            <thead>
+              <tr class="cart_menu">
+                <th class="image">#</th>
+                <td class="description" translate>Product</td>
+                <td class="price" translate>Price</td>
+                <td class="price" translate>Delivery Price</td>
+                <td class="quantity" translate>Quantity</td>
+                <td class="total" translate>Total Price</td>
+                <td class="description" translate>Note</td>
+                <td translate>Action</td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of cart?.products; let i = index">
+                <td class="cart_product">
+                  <a appLocationHref [url]="'/products/' + item.product?.alias">
+                    <img [src]="item.product?.mainImage?.thumbUrl | checkPhoto" width="100px" />
+                  </a>
+                </td>
+                <td class="cart_description">
+                  <h4>
+                    <a appLocationHref [url]="'/products/' + item.product?.alias"> {{item.product?.name}} </a>
+                  </h4>
+                  <p *ngFor="let option of item.variant?.options">
+                    <span>{{option.displayText || option.optionKey}}</span>: <span>{{option.value}}</span>
+                  </p>
+                  <p>
+                    <span>Weight: {{item.product?.weight}}{{item.product?.weightType}}</span>
+                    <span class="pull-right">Volume: {{item.product?.volume}} &#13221;</span>
+                  </p>
+                  <p> {{item.product?.shortDescription}} </p>
+                  <p><span translate>Prod ID</span>: {{item.product?._id}}</p>
+                  <!-- change logic later after allow shipping -->
+                  <!-- <div class="form-group" *ngIf="item.product.shop && item.product.shop.pickUpAtStore">
+                    <label><input [(ngModel)]="item.isPickUpAtStore" (change)="openPickUp(item.isPickUpAtStore, item.userPickUpInfo, i)" name="pickUpAtStore" type="checkbox">
+                      <span translate>Pick up at store</span><strong *ngIf="item.userPickUpInfo && item.userPickUpInfo.pickUpBy" translate>by {{item?.userPickUpInfo?.pickUpBy}}</strong></label>
+                  </div> -->
+                  <div class="form-group error" *ngIf="item.product.shop && item.product.shop.pickUpAtStore">
+                    <p class="mar-0">
+                      <label class="form-check-inline">
+                        <input class="form-check-input" [(ngModel)]="item.isPickUpAtStore" name="pickUp_{{i}}"
+                          [value]="true" type="radio" (change)="showToasty(item)">
+                        <span translate>Pick up at store </span>
+                        <div class="input-group-prepend dropdown-pickup-block" *ngIf="item.isPickUpAtStore">
+                          <div ngbDropdown class="d-inline-block">
+                            <button class="btn btn-outline-secondary dropdown-toggle flag-dropdown" type="button"
+                              id="dropdownpickup" ngbDropdownToggle>
+                              by {{item?.userPickUpInfo?.pickUpBy}}
+                            </button>
+                            <div ngbDropdownMenu aria-labelledby="dropdownpickup" class="pickup-dropdown">
+                              <button class="dropdown-item" type="button" (click)="chooseSelf(i)">
+                                <span translate>Self</span>
+                              </button>
+                              <button class="dropdown-item" type="button" (click)="openPickUp(item.userPickUpInfo, i)">
+                                <span translate>Other</span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </label>
+                    </p>
+                    <p class="mar-0">
+                      <label class="form-check-inline">
+                        <input class="form-check-input" [(ngModel)]="item.isPickUpAtStore" name="pickUp_{{i}}"
+                          [value]="false" type="radio" (change)="showToasty(item)">
+                        <span translate>Delivery </span>
+                      </label>
+                    </p>
+                  </div>
+                  <p *ngIf="item.userPickUpInfo && item.userPickUpInfo.pickUpBy === 'others'">
+                    <span translate>Name</span>:
+                    <strong> {{item?.userPickUpInfo?.name}}</strong> -
+                    <span translate>ID Number</span>
+                    <strong>{{item?.userPickUpInfo?.idNumber}}</strong>
+                  </p>
+                  <p *ngIf="item.userPickUpInfo && item.userPickUpInfo.pickUpBy === 'others'"><span translate>
+                      Phone Number</span>:
+                    <strong> {{item?.userPickUpInfo?.phoneNumber}}</strong>
+                  </p>
+                  <!-- Pick up at store -->
+                  <div *ngIf="item.isPickUpAtStore">
+                    <p><span translate>Shop</span>: <strong>
+                        {{item?.product?.shop?.name}}</strong></p>
+                    <p translate class="bold-green">Please select the location where Item to
+                      be Picked Up
+                    </p>
+                    <select *ngIf="item.product.shop.pickUpAddress && item.product.shop.pickUpAddress.length"
+                      class="form-control" (ngModelChange)="selectPickUpAddress($event, i, 'pickUpAtStore')"
+                      [(ngModel)]="item.pickUpAddress" name="pickUpAddress" #pickUpAddress="ngModel">
+                      <option *ngFor="let addressItem of item.product.shop.pickUpAddress" [ngValue]="addressItem">
+                        {{addressItem?.street}}, {{addressItem?.area}}, {{addressItem?.city}}
+                      </option>
+                    </select>
+                    <select *ngIf="!item.product.shop.pickUpAddress.length" class="form-control"
+                      (ngModelChange)="selectPickUpAddress($event, i, 'pickUpAtStore')" [(ngModel)]="item.pickUpAddress"
+                      name="pickUpAddress" #pickUpAddress="ngModel">
+                      <option [ngValue]="item.product.shop">
+                        {{item?.product?.shop?.address}}, {{item?.product?.shop?.state}}, {{item?.product?.shop?.city}}
+                      </option>
+                    </select>
+                  </div>
+                  <!-- <select class="form-control" *ngIf="item.isPickUpAtStore" [(ngModel)]="item.pickUpAddress"
+                    name="pickUpAddress" (change)="updatePickUpAddress(item.pickUpAddress, i)">
+                    <option *ngFor="let address of item.product.shop.pickUpAddress" [value]="address">
+                      {{address?.street}}, {{address?.area}}, {{address.city}}</option>
+                  </select> -->
+                  <!--  -->
+                  <!-- Delivery -->
+                  <div *ngIf="!item.isPickUpAtStore">
+                    <p translate class="bold-green">
+                      Please select the delivery company that will deliver the product to you
+                    </p>
+                    <select class="form-control" [(ngModel)]="item.deliveryCompanyId" name="delivery"
+                      (change)="selectCompany(item.deliveryCompanyId, i)">
+                      <option *ngFor="let company of companies" [value]="company._id">{{company.name}}</option>
+                    </select>
+                    <br>
+                    <p translate class="bold-green">
+                      Please select the pick up address of shop that you want driver pick up product for you
+                    </p>
+                    <select *ngIf="item.product.shop.pickUpAddress && item.product.shop.pickUpAddress.length"
+                      class="form-control" (ngModelChange)="selectPickUpAddress($event, i, 'delivery')"
+                      [(ngModel)]="item.pickUpAddressObj" name="pickUpAddress" #pickpAddressObj="ngModel">
+                      <option *ngFor="let addressItem of item.product.shop.pickUpAddress" [ngValue]="addressItem">
+                        {{addressItem?.street}}, {{addressItem?.area}}, {{addressItem?.city}}
+                      </option>
+                    </select>
+                    <select *ngIf="!item.product.shop.pickUpAddress.length" class="form-control"
+                      (ngModelChange)="selectPickUpAddress($event, i, 'pickUpAtStore')" [(ngModel)]="item.pickUpAddress"
+                      name="pickUpAddress" #pickUpAddress="ngModel">
+                      <option [ngValue]="item.product.shop">
+                        {{item?.product?.shop?.address}}, {{item?.product?.shop?.state}}, {{item?.product?.shop?.city}}
+                      </option>
+                    </select>
+                  </div>
+                  <!--  -->
+                </td>
+                <td class="cart_price">
+                  <span>
+                    <strong translate>Price</strong>: {{item.calculatedData?.product | currency:'ZMW '}} </span> <br />
+                  <span>
+                    <strong translate>Tax</strong>: {{item.calculatedData?.tax | currency:'ZMW '}} </span>
+                </td>
+                <td class="cart_price">
+                  <span translate class="label label-success" *ngIf="item.freeShip">Free</span>
+                  <!-- <span *ngIf="!item.freeShip">{{item.calculatedData?.shipping | currency:'ZMW '}}</span> -->
+                  <span *ngIf="!item.freeShip">{{item.deliveryZonePrice | currency:'ZMW '}}</span>
+                </td>
+                <td class="cart_quantity">
+                  <input type="number" name="number{{i}}" class="form-control" [(ngModel)]="item.quantity" min="1"
+                    (keypress)="onlyNumberKey($event)" (change)="updateTotalPrice()" [disabled]="item.error" />
+                  <p *ngIf="item.error">
+                    <span translate class="label label-error">Out of stock</span>
+                    <span translate>Please remove this product from the cart!</span>
+                  </p>
+                </td>
+                <td class="cart_total"> {{item.calculatedData?.total | currency:'ZMW '}} </td>
+                <td>
+                  <textarea rows="2" [(ngModel)]="item.userNote" name="userNote" class="form-control min-width-100"
+                    placeholder="{{'Enter your note' | translate}}"></textarea>
+                </td>
+                <td class="cart_delete">
+                  <a class="cart_quantity_delete" title="Click here to remove item from the list "
+                    (click)="remove(i)"><i class="fa fa-times"></i></a>
+                </td>
+
+              </tr>
+              <tr *ngIf="!cart?.products?.length">
+                <td colspan="8">
+                  <p translate class="text-center">You have an empty cart. <a appLocationHref [url]="'/products/search'"
+                      translate style="color: #2E64FE">Shop now</a>
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </article>
+    <div class="list-non-cod" *ngIf="productsNonCod.length">
+      <ul>
+        <li *ngFor="let item of productsNonCod">
+          <span translate>Product </span><span class="badge badge-info">{{item?.product?.name}}
+            <span *ngIf="item.variant && item.variant.options"><span *ngFor="let option of item.variant.options">
+                {{option?.displayText || option?.optionKey}}: {{option?.value}}</span></span>
+          </span><span translate>is not supported COD, please try different payment method</span>
+        </li>
+      </ul>
+    </div>
+    <section id="do_action" *ngIf="cart?.products?.length">
+      <div class="container">
+        <div class="heading">
+          <h3 translate>Fill your information for the order</h3>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="row total_area">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label translate class="required">First Name</label>
+                  <input class="form-control" [(ngModel)]="userInfo.firstName" required name="firstName"
+                    #firstName="ngModel" />
+                  <div *ngIf="firstName.errors && (firstName.dirty || firstName.touched || isSubmitted)">
+                    <p [hidden]="!firstName.errors.required" class="error" translate>Please enter your first name! </p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label translate class="required">Last Name</label>
+                  <input class="form-control" [(ngModel)]="userInfo.lastName" required name="lastName"
+                    #lastName="ngModel" />
+                  <div *ngIf="lastName.errors && (lastName.dirty || lastName.touched || isSubmitted)">
+                    <p [hidden]="!lastName.errors.required" class="error" translate>Please enter your last name! </p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <label translate class="required">Mobile Number</label>
+                  <div class="input-group">
+                    <dial-code (selectCode)="selectDial($event)" [dial]="mobile.dial"></dial-code>
+                    <input type="text" class="form-control" pattern="[0-9]{9,10}" (keypress)="onlyNumberKey($event)"
+                      [(ngModel)]="mobile.number" required name="phoneNumber" #phone="ngModel" />
+                  </div>
+                  <div *ngIf="phone.errors && (phone.dirty || phone.touched || isSubmitted)">
+                    <p [hidden]="!phone.errors.pattern" class="error" translate>Please enter 9 or 10 digits number</p>
+                    <p [hidden]="!phone.errors.required" class="error" translate>Mobile number is required </p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <label translate class="required">Email</label>
+                  <input class="form-control" [(ngModel)]="userInfo.email" required name="email" #email="ngModel"
+                    pattern="[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" />
+                  <div *ngIf="email.errors && (email.dirty || email.touched || isSubmitted)">
+                    <p [hidden]="!email.errors.required" class="error" translate>Please enter your email </p>
+                    <p [hidden]="!email.errors.pattern" class="error" translate>Please enter a valid email address </p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label translate class="required">Street Address</label>
+                  <input class="form-control" [(ngModel)]="userInfo.streetAddress" required name="streetAddress"
+                    #streetAddress="ngModel" />
+                  <div *ngIf="streetAddress.errors && (streetAddress.dirty || streetAddress.touched || isSubmitted)">
+                    <p [hidden]="!streetAddress.errors.required" class="error" translate>Please enter your street
+                      address</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label translate class="required">City/Town</label>
+                  <select class="form-control" [(ngModel)]="userInfo.city" required name="city" #city="ngModel"
+                    (change)="cityChange(userInfo.city)">
+                    <option *ngFor="let item of cities" [value]="item.name">{{item?.name}}</option>
+                  </select>
+                  <div *ngIf="city.errors && (city.dirty || city.touched || isSubmitted)">
+                    <p [hidden]="!city.errors.required" class="error" translate>Please select your city</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group" *ngIf="citySelected.areas && citySelected.areas.length || userInfo.area">
+                  <label translate class="required">Area</label>
+                  <select class="form-control" [(ngModel)]="userInfo.area" (change)="areaChange(userInfo.area)"
+                    name="area" required #area="ngModel">
+                    <option *ngFor="let area of citySelected.areas" [value]="area">{{area}}</option>
+                  </select>
+                  <div *ngIf="area.errors && (area.dirty || area.touched || isSubmitted)">
+                    <p [hidden]="!area.errors.required" class="error" translate>Please select your area</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label translate class="required">Country</label>
+                  <input class="form-control" [(ngModel)]="userInfo.country" required name="country" #country="ngModel"
+                    pattern="[A-Za-z\s]+" readonly />
+                  <div *ngIf="country.errors && (country.dirty || country.touched || isSubmitted)">
+                    <p [hidden]="!country.errors.pattern" class="error" translate>'Country' field must contain only
+                      alphabets</p>
+                    <p [hidden]="!country.errors.required" class="error" translate>Please enter your country</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 mobile-pad-0">
+            <div class="total_area mar-0"
+              [hidden]="paymentGateway.cod.enable || paymentGateway.paypal.enable || paymentGateway.stripe.enable || paymentGateway.mygateglobal.enable">
+              <div class="text-center">
+                <h1 class="display-3" translate>Sorry!</h1>
+                <p class="lead" translate>The current system does not have any payment gateways available.</p>
+                <p class="lead" translate>Please come back later!</p>
+                <hr>
+                <p>
+                  <a translate>Have any problem?</a>&nbsp;<a href="/contact/us" translate>please contact with us</a>
+                </p>
+              </div>
+            </div>
+            <div class="row total_area mar-0"
+              [hidden]="!paymentGateway.cod.enable && !paymentGateway.paypal.enable && !paymentGateway.stripe.enable || !paymentGateway.mygateglobal.enable">
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <label translate>Payment Method</label>
+                  <p *ngIf="paymentGateway.cod.enable" class="mar-0">
+                    <label class="form-check-inline">
+                      <input class="form-check-input" type="radio" name="mode" [value]="'cod'"
+                        [(ngModel)]="userInfo.paymentMethod" (change)="updateTotalPrice()">
+                      <span translate>Cash on delivery (COD)</span>
+                    </label>
+                  </p>
+                  <p *ngIf="paymentGateway.paypal.enable" class="mar-0">
+                    <label class="form-check-inline">
+                      <input class="form-check-input" type="radio" name="mode" [value]="'paypal'"
+                        [(ngModel)]="userInfo.paymentMethod" (change)="updateTotalPrice()">
+                      <span translate>Paypal</span>
+                    </label>
+                  </p>
+                  <p *ngIf="paymentGateway.cybersource.enable" class="mar-0">
+                    <label class="form-check-inline">
+                      <input class="form-check-input" type="radio" name="mode" [value]="'cybersource'"
+                        [(ngModel)]="userInfo.paymentMethod" (change)="updateTotalPrice()">
+                      <span translate class="mar-right-5">Debit/Credit Card</span>
+                      <img src="/assets/images/visa-icon.png" width="30px" style="margin-right: 1px">
+                      <img src="/assets/images/master-card-icon.png" width="30px" style="margin-right: 1px">
+                      <img src="/assets/images/union_pay_logo.png" width="30px">
+                    </label>
+                  </p>
+                  <p *ngIf="paymentGateway.mtn.enable" class="mar-0">
+                    <label class="form-check-inline">
+                      <input class="form-check-input" type="radio" name="mode" [value]="'mtn'"
+                        [(ngModel)]="userInfo.paymentMethod" (change)="updateTotalPrice()">
+                      <span translate class="mar-right-5">Mobile Money</span>
+                      <img src="/assets/images/MTN_logo.png" width="30px">
+                    </label>
+                  </p>
+                </div>
+              </div>
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <label translate>Coupon</label>
+                  <div class="input-group">
+                    <input name="coupon" [(ngModel)]="coupon" class="form-control unset"
+                      placeholder="{{'Enter coupon code here' | translate}}">
+                    <div class="input-group-prepend">
+                      <button class="btn btn-success" (click)="checkCoupon()" type="button">
+                        <span translate>Apply!</span>
+                      </button>
+                    </div>
+                  </div>
+                  <p><small translate>If you have a discount coupon, please enter it</small></p>
+                </div>
+                <div class="form-group">
+                  <label translate>Summary</label>
+                  <p>
+                    <strong translate>Tax</strong>
+                    <span class="badge badge-success" *ngIf="!totalTaxPrice" translate>Free</span>
+                    <span *ngIf="totalTaxPrice && cart">{{totalTaxPrice | currency:'ZMW '}}</span>
+                  </p>
+                  <p>
+                    <strong translate>Delivery Price</strong>
+                    <span class="badge badge-success" *ngIf="!totalShippingPrice" translate>Free</span>
+                    <span *ngIf="totalShippingPrice && cart">{{totalShippingPrice | currency:'ZMW '}}</span>
+                  </p>
+                  <p>
+                    <strong translate>Discount</strong>
+                    <span *ngIf="totalDiscountPrice && cart">{{totalDiscountPrice | currency:'ZMW '}}</span>
+                    <span *ngIf="!totalDiscountPrice && cart">ZK 0.00</span>
+                  </p>
+                  <p>
+                    <strong translate>Total</strong>
+                    <span *ngIf="totalPrice && cart">{{totalPrice | currency:'ZMW '}}</span>
+                  </p>
+                  <p class="text-right">
+                    <button class="btn btn-warning" type="submit" translate>Check Out</button>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </form>
+</div>

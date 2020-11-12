@@ -1,0 +1,214 @@
+<breadcrumb [info]="{parentUrl: '/shops/search', parentTitle: 'Shops', childTitle: shop?.name}"></breadcrumb>
+<div class="container pad-30-0">
+  <div class="shop-new-custom">
+    <div class="fb-profile-block">
+      <div class="fb-profile-block-thumb">
+        <img height="100%" width="100%" [src]="shop?.banner?.fileUrl | shopBanner" alt="cover-banner"
+          (click)="swipe(shop.banner?.fileUrl)">
+      </div>
+      <div class="profile-img">
+        <a [ngStyle]="{marginBottom: socialConnect ? '28px' : 0}"><img [src]="shop?.logo?.mediumUrl | shopLogo"
+            (click)="swipe(shop.logo?.fileUrl)" alt="cover-logo"></a>
+      </div>
+      <div class="profile-name" [ngStyle]="{marginBottom: socialConnect ? '28px' : 0}">
+        <h2>{{shop?.name}}
+          <img width="28px" src="../../../../assets/images/trusted/green-tick-mark.png" [hidden]="!socialConnect">
+        </h2>
+      </div>
+      <div class="fb-profile-block-menu">
+        <div class="block-menu">
+          <div class="block-menu-text">
+            <div class="pad-right-15 font-weight-bold">
+              <i class="fa fa-phone"></i>&nbsp;{{shop?.phoneNumber}}
+              <span class="pull-right">
+                <i class="fa fa-envelope"></i>&nbsp;
+                <a href="mailto:{{shop?.email}}" target="_top">{{shop?.email}}</a>
+              </span>
+            </div>
+            <div class="pad-right-15 font-weight-bold">
+              <i class="fa fa-map-marker"></i>&nbsp;{{shop?.address}} <span *ngIf="shop.area">, </span>{{shop?.area}}
+              <span *ngIf="shop.city">, </span>{{shop?.city}}
+            </div>
+            <h4 [hidden]="!socialLink">
+              <ul class="shop-icons-success font-weight-bold">
+                Social link:
+                <li *ngIf="shop.socials.facebook">
+                  <a [href]="shop.socials.facebook" target="_blank">
+                    <img width="18px" src="../../../../assets/images/trusted/facebook.png">
+                  </a>
+                </li>
+                <li *ngIf="shop.socials.google">
+                  <a [href]="shop.socials.google" target="_blank">
+                    <img width="18px" src="../../../../assets/images/trusted/google-plus.png">
+                  </a>
+                </li>
+                <li *ngIf="shop.socials.twitter">
+                  <a [href]="shop.socials.twitter" target="_blank">
+                    <img width="18px" src="../../../../assets/images/trusted/twitter.png">
+                  </a>
+                </li>
+                <!-- <li *ngIf="shop.socials.linkedin">
+                  <a [href]="shop.socials.linkedin" target="_blank">
+                    <i class="fa fa-linkedin"></i>&nbsp;
+                  </a>
+                </li> -->
+                <li *ngIf="shop.socials.youtube">
+                  <a [href]="shop.socials.youtube" target="_blank">
+                    <img width="18px" src="../../../../assets/images/trusted/youtube.png">
+                  </a>
+                </li>
+                <li *ngIf="shop.socials.instagram">
+                  <a [href]="shop.socials.instagram" target="_blank">
+                    <img width="18px" src="../../../../assets/images/trusted/instagram.png">
+                  </a>
+                </li>
+                <!-- <li *ngIf="shop.socials.flickr">
+                  <a [href]="shop.socials.flickr" target="_blank">
+                    <i class="fa fa-flickr"></i>&nbsp;
+                  </a>
+                </li> -->
+              </ul>
+            </h4>
+          </div>
+          <div class="block-menu-button">
+            <star-rating [rate]="shop?.ratingAvg" [total]="shop?.totalRating"></star-rating>&nbsp;
+            <a title="Report the shop" (click)="report()"><i class="fa fa-flag"></i></a>
+            <br>
+            <div>
+              <send-message-btn [hidden]="shop.ownerId === userID" [recipientId]="shop?.ownerId"></send-message-btn>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="text-center" [hidden]="!shop?.announcement">
+      <p class="badge badge-danger badge-announcement"><i class="fa fa-bullhorn"></i> {{shop?.announcement}}</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-3">
+      <div class="left-sidebar">
+        <h2 translate>Category</h2>
+        <div class="panel-group category-products">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" (click)="updateQuery('')">
+                  <span translate>All Categories</span>
+                </a>
+              </h4>
+            </div>
+          </div>
+          <div class="panel panel-default" *ngFor="let category of tree">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" (click)="updateQuery(category._id)"
+                  [ngClass]="{collapsed: !category.showChildren, 'active-a': category._id === searchFields.categoryId}">
+                  {{category.name}}
+                </a>
+                <span class="badge pull-right" *ngIf="category?.children?.length"
+                  (click)="category.showChildren = !category.showChildren">
+                  <i class="fa fa-plus" [hidden]="category.showChildren"></i>
+                  <i class="fa fa-minus" [hidden]="!category.showChildren"></i>
+                </span>
+              </h4>
+            </div>
+            <div class="panel-collapse" *ngIf="category?.children?.length"
+              [ngClass]="{collapse: !category.showChildren, in: category.showChildren}">
+              <div class="panel-body">
+                <ul>
+                  <li *ngFor="let child of category.children">
+                    <a (click)="updateQuery(child._id)" [ngClass]="{'active-a': child._id === searchFields.categoryId}">
+                      {{child.name}}
+                    </a>
+                    <span class="badge pull-right" *ngIf="child?.children?.length"
+                      (click)="child.showChildren = !child.showChildren">
+                      <i class="fa fa-plus" [hidden]="child.showChildren"></i>
+                      <i class="fa fa-minus" [hidden]="!child.showChildren"></i>
+                    </span>
+                    <div class="pad-10" *ngFor="let subChild of child.children"
+                      [ngClass]="{collapse: !child.showChildren, in: child.showChildren}">
+                      <a (click)="updateQuery(subChild._id)"
+                        [ngClass]="{'active-a': subChild._id === searchFields.categoryId}">{{subChild.name}}</a>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-9">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <ul class="nav nav-tabs products-tab">
+            <li class="nav-item">
+              <a class="nav-link" (click)="tab = 'products'" [ngClass]="{active: tab === 'products'}" translate>Products
+                <span>({{totalProducts|number}})</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" (click)="tab = 'reviews'" [ngClass]="{active: tab === 'reviews'}" translate>Reviews
+                <span>({{shop?.totalRating|number}})</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" (click)="tab = 'shippingPolicy'" [ngClass]="{active: tab === 'shippingPolicy'}"
+                translate>Shipping Policy</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" (click)="tab = 'refundPolicy'" [ngClass]="{active: tab === 'refundPolicy'}"
+                translate>Refund
+                Policy</a>
+            </li>
+          </ul>
+
+          <div *ngIf="tab === 'products'">
+            <div class="row" *ngIf="!isLoading">
+              <div class="search-shop-bar">
+                <div class="block-search-input">
+                  <div class="input-group mb-3 product-search-form">
+                    <input type="text" class="form-control" name="productSearch"
+                      placeholder="{{'Search products' | translate}}" (keypress)="keyPress($event)"
+                      [(ngModel)]="searchFields.q" />
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-secondary" type="button" (click)="query()">
+                        <i class="fa fa-search"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4" *ngFor="let product of products">
+                <product-card [product]="product" [isOwner]="true"></product-card>
+              </div>
+              <div class="col-md-12" *ngIf="!totalProducts">
+                <p class="badge badge-warning" translate>No product found.</p>
+              </div>
+              <div class="col-md-12" [hidden]="totalProducts < take">
+                <ngb-pagination [collectionSize]="totalProducts" [(page)]="page" [maxSize]="5" [pageSize]="take"
+                  (pageChange)="query()"></ngb-pagination>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="tab === 'reviews'">
+            <review-list [options]="{shopId: shop?._id, type: 'shop'}"></review-list>
+          </div>
+
+          <div class="prod-description pt-3 pb-3" [hidden]="tab !== 'shippingPolicy'">
+            <p class="pre-line">{{shop?.shippingSettings?.shippingPolicy}}</p>
+            <div *ngIf="!shop.shippingSettings.shippingPolicy">
+              <p>No shipping policy for product!</p>
+            </div>
+          </div>
+          <div class="prod-description pt-3 pb-3" [hidden]="tab !== 'refundPolicy'">
+            <p class="pre-line">{{shop?.shippingSettings?.refundPolicy}}</p>
+            <div *ngIf="!shop.shippingSettings.refundPolicy">
+              <p>No refund policy for product!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

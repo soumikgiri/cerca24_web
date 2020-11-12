@@ -1,0 +1,24 @@
+<div class="header-bottom">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-8 mobile">
+        <div class="mainmenu pull-left">
+          <ul class="nav navbar-nav navbar-collapse">
+            <li><a [routerLink]="['/']" [ngClass]="{'active': router.url === '/'}" translate>Home</a></li>
+            <li><a appLocationHref [url]="'/products/search'" [ngClass]="{'active': router.url === '/products/search'}" translate>Products</a></li>
+            <li><a appLocationHref [url]="'/shops/search'" [ngClass]="{'active': router.url === '/shops/search'}" translate>Shops</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-sm-4 mobile">
+        <div class="cart-top">
+          <a appLocationHref [url]="'/cart/checkout'">
+            <img src="/assets/images/cart.png">
+            <span>{{cart ? cart.length : 0}}</span>
+            <span class="check-out-text">Check out!</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

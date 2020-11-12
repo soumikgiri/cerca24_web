@@ -1,0 +1,15 @@
+<div class="container">
+  <div class="row page-titles">
+    <div class="align-self-center">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item" >
+              <a [routerLink]="[info?.parentUrl]">{{info?.parentTitle}}</a>
+          </li>
+            <li class="breadcrumb-item" *ngIf="info.category">
+              <a [routerLink]="['/products/search']" [queryParams]="{categoryId: info?.category?.id}">{{info?.category?.name}}</a>
+          </li>
+          <li class="breadcrumb-item active">{{info?.childTitle}}</li>
+      </ol>
+    </div>
+  </div>
+</div>
